@@ -20,16 +20,13 @@ class AuthController {
             res.status(201).json(user);
         }
     }
-    register1 = async (req, res) => {
-        let user = req.body;
-        user.password = await bcrypt.hash(user.password, 10);
-        user = await User.create(user);
-        res.status(201).json(user);
-    }
+
     login = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            
             let loginForm = req.body;
             let user = await User.findOne(loginForm);
+                        
             if (!user) {
                 res.status(401).json({
                     message: 'Username is not existed!'
@@ -47,13 +44,14 @@ class AuthController {
                         })
                     } else {
                         let payload = {
-                            username: user.username
+                            username: user.username,
+                            role: user.role
                         }
                         let token = await jwt.sign(payload, SECRET_KEY, {
                             expiresIn: 360000
                         })
                         res.status(201).json({
-                            token: token
+                            token: token                         
                         })
                     }
                 }
@@ -65,35 +63,6 @@ class AuthController {
 
     }
 
-
-    login1 = async (req, res) => {
-        let loginForm = req.body;
-        let user = await User.findOne({
-            username: loginForm.username
-        });
-        if (!user) {
-            res.status(401).json({
-                message: 'Username is not existed!'
-            })
-        } else {
-            let comparePassword = await bcrypt.compare(loginForm.password, user.password);
-            if (!comparePassword) {
-                res.status(401).json({
-                    message: 'Password is wrong'
-                })
-            } else {
-                let payload = {
-                    username: user.username
-                }
-                let token = await jwt.sign(payload, SECRET_KEY, {
-                    expiresIn: 36000
-                });
-                res.status(200).json({
-                    token: token
-                });
-            }
-        }
-    }
 
 }
 export default new AuthController();
