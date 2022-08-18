@@ -21,48 +21,41 @@ class AuthController {
         }
     }
 
+   
     login = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            
+        try{
             let loginForm = req.body;
-            let user = await User.findOne(loginForm);
-                        
+            let user = await User.findOne({
+                username: loginForm.username
+            });
             if (!user) {
                 res.status(401).json({
                     message: 'Username is not existed!'
                 })
             } else {
-                if (user.status != 1) {
+                let comparePassword = await bcrypt.compare(loginForm.password, user.password);
+                if (!comparePassword) {
                     res.status(401).json({
-                        message: 'Your account is locked'
+                        message: 'Password is wrong'
                     })
                 } else {
-                    let comparePassword = await bcrypt.compare(loginForm.passwourd, user.password);
-                    if (!comparePassword) {
-                        res.status(401).json({
-                            message: "Password is fales"
-                        })
-                    } else {
-                        let payload = {
-                            username: user.username,
-                            role: user.role
-                        }
-                        let token = await jwt.sign(payload, SECRET_KEY, {
-                            expiresIn: 360000
-                        })
-                        res.status(201).json({
-                            token: token                         
-                        })
+                    let payload = {
+                        username: user.username,
+                        role: user.role
                     }
+                    let token = await jwt.sign(payload, SECRET_KEY, {
+                        expiresIn: 36000
+                    });
+                    res.status(200).json({
+                        token: token
+                    });
                 }
-
             }
-        } catch (err) {
+        }catch(err){
             next(err)
         }
-
+        
     }
-
 
 }
 export default new AuthController();
