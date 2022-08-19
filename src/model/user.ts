@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose"
 import { IRole } from "./role";
-import {IStore} from "./store"
+import {IStore} from "./store";
+import {ICart} from "./cart"
 export interface IUser {
     name: string,
     avatar: string,
@@ -9,7 +10,8 @@ export interface IUser {
     email: string,
     status: number,
     role: IRole,
-    store: IStore
+    store: IStore,
+    cart : ICart
 }
 const UserSchema = new Schema<IUser>({
     name: String,
@@ -25,7 +27,10 @@ const UserSchema = new Schema<IUser>({
     store: {
         type: Schema.Types.ObjectId,
         ref: 'Store'
-
+    },
+    cart : {
+        type: Schema.Types.ObjectId,
+        ref: 'Cart'
     }
 })
 export const User = model<IUser>('User', UserSchema);
