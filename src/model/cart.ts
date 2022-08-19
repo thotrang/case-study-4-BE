@@ -1,18 +1,19 @@
 import {model, Schema} from "mongoose";
 import { IUser } from "./user";
+import { IItem } from "./item";
+import { IDiscount } from "./discount";
 
 export interface ICart {
-    name?: string;
     price?: number;
     amount?: number;
     image?: string;
     total?: number;
-    user: IUser
-
+    user: IUser;
+    item: IItem;
+    discount:IDiscount,
 }
 
 const cartSchema = new Schema<ICart>({
-    name: String,
     price: Number,
     amount: Number,
     image: String,
@@ -20,7 +21,15 @@ const cartSchema = new Schema<ICart>({
     user:{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    item:[{
+        type: Schema.Types.ObjectId,
+        ref:'Item'
+    }],
+    discount:[{
+        type: Schema.Types.ObjectId,
+        ref:'Discount'
+    }]
 })
 
 const Cart = model<ICart>('Cart', cartSchema);

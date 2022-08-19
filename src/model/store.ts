@@ -1,4 +1,6 @@
 import {model, Schema} from "mongoose";
+import { ICategory } from "./category";
+import { IProduct } from "./product";
 import { IUser } from "./user";
 
 
@@ -7,7 +9,9 @@ export interface IStore {
     address?: string;
     userid?: number;
     image?: string;
-    user: IUser
+    user: IUser,
+    product:IProduct,
+    category:ICategory
 
 }
 
@@ -19,7 +23,15 @@ const storeSchema = new Schema<IStore>({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    product: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
+    category:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Category'
+    }]
 });
 
 const Store = model<IStore>('Store', storeSchema);
