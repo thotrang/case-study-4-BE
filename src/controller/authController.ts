@@ -13,7 +13,12 @@ class AuthController {
             })
         } else {
             user.password = await bcrypt.hash(user.password, 10);
-            user.role = ["62fd161bfd34f0abdd2051d0"];
+            let role =await Role.findOne({
+                name:'user'
+            })
+            user.role = [role._id];
+            console.log(user.role);
+            
             user.status = 1;
             user = await User.create(user);
             await Role.updateMany({ '_id': user.role }, { $push: { users: user._id } });
@@ -27,7 +32,7 @@ class AuthController {
             let loginForm = req.body;
             let user = await User.findOne({
                 username: loginForm.username
-            });
+            }).populate('role', 'name');
             if (!user) {
                 res.status(401).json({
                     message: 'Username is not existed!'
@@ -47,8 +52,10 @@ class AuthController {
                         expiresIn: 36000
                     });
                     res.status(200).json({
-                        token: token
+                        token: token,
+                        role: user.role
                     });
+                    next()
                 }
             }
         }catch(err){

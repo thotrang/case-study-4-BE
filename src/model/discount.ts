@@ -1,11 +1,10 @@
 import {model, Schema} from "mongoose";
-import {ICart} from "./cart";
-import {IStore} from './store'
+import { ICart } from "./cart";
+
 export interface IDiscount {
     name : string;
     sale : number;
     cart : ICart;
-    store : IStore
 }
 
 const discountSchema = new Schema<IDiscount> ({

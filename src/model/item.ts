@@ -4,7 +4,8 @@ import {ICart} from './cart'
 export interface IItem {
     amount : number,
     product : IProduct,
-    cart : ICart
+    cart : ICart,
+    
 }
 
 const itemSchema = new Schema<IItem> ({

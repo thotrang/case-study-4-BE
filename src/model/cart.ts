@@ -6,7 +6,9 @@ export interface ICart {
     amount?: number;
     image?: string;
     total?: number;
-
+    user: IUser;
+    item: IItem;
+    discount:IDiscount,
 }
 
 const cartSchema = new Schema<ICart>({
