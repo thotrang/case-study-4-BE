@@ -23,16 +23,3 @@ export const auth = (req,res:Response,next:NextFunction) =>{
         })
     }
 }
-export const checkAdmin = (req,res,next) => {
-    let role = req.decoded.role;
-    for(let i=0;i<role.length;i++){
-        if(role[i].name == 'admin'){
-            next()
-        }else{
-            res.status(401).json({
-                message:'you not permison'
-            })
-        }
-    }
-    res.status(401).json()
-}
