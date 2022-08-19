@@ -1,6 +1,6 @@
 import {model, Schema} from "mongoose";
 import {ICategory} from "./category"
-interface IProduct{
+export interface IProduct{
     name?: string;
     price?: number;
     amount?: number;
