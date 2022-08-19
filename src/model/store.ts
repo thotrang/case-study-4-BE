@@ -1,7 +1,7 @@
 import {model, Schema} from "mongoose";
 
 
-interface IStore {
+export interface IStore {
     name?: string;
     address?: string;
     userid?: number;
