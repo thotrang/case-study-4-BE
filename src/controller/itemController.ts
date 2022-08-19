@@ -7,7 +7,7 @@ export class ItemController {
         let item = await Item.find().populate('product', ['name', 'price'])
         res.status(200).json(item)
     }
-    createItem = async (req: Request, res: Response, next: NextFunction) => {
+    addItem = async (req: Request, res: Response, next: NextFunction) => {
         try {
             let add = req.body
             add = await Item.create(add)
@@ -48,3 +48,5 @@ export class ItemController {
         }
     }
 }
+
+export default new ItemController()
