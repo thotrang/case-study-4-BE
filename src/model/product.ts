@@ -1,5 +1,6 @@
 import {model, Schema} from "mongoose";
 import {ICategory} from "./category"
+import { IStore } from "./store";
 export interface IProduct{
     name?: string;
     price?: number;
@@ -7,6 +8,8 @@ export interface IProduct{
     image?: string;
     description?: string;
     category?: ICategory;
+    store: IStore;
+
 }
 const productSchema = new Schema<IProduct>({
     name: String,
@@ -17,7 +20,12 @@ const productSchema = new Schema<IProduct>({
     category: {
         type: Schema.Types.ObjectId,
         ref: 'Category'
-    }
+    },
+    store:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Store'
+    }]
+
 })
 const Product = model<IProduct>('Product',productSchema);
 export {Product}
