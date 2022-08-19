@@ -11,3 +11,4 @@ router.use('/admin/:id',checkAdmin, routerUser);
 router.use('/user/:id',routerUser);
 router.use('/carts',cartRoute);
 router.use('/stores',storeRoute);
+

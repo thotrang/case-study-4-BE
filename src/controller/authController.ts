@@ -1,29 +1,36 @@
-import { NextFunction, Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
-import { User } from "../model/user";
-import { SECRET_KEY } from "../middleware/auth";
-import { Role } from "../model/role";
+import {User} from "../model/user";
+import {SECRET_KEY} from "../middleware/auth";
+import {Role} from "../model/role";
+
 class AuthController {
     register = async (req: Request, res: Response) => {
         let user = req.body;
-        if (user.password != user.rePassword) {
-            res.status(500).json({
-                message: 'Re-password false'
-            })
-        } else {
+        let checkUser = User.findOne({
+            username: user.username
+
+        })
+        if (checkUser) {
+            res.status(404).json({
+                    message: 'Username already exist '
+                }
+            )
+        }else {
             user.password = await bcrypt.hash(user.password, 10);
             user.role = ["62fd161bfd34f0abdd2051d0"];
             user.status = 1;
             user = await User.create(user);
-            await Role.updateMany({ '_id': user.role }, { $push: { users: user._id } });
+            await Role.updateMany({'_id': user.role}, {$push: {users: user._id}});
             res.status(201).json(user);
         }
+
     }
 
-   
+
     login = async (req: Request, res: Response, next: NextFunction) => {
-        try{
+        try {
             let loginForm = req.body;
             let user = await User.findOne({
                 username: loginForm.username
@@ -51,11 +58,12 @@ class AuthController {
                     });
                 }
             }
-        }catch(err){
+        } catch (err) {
             next(err)
         }
-        
+
     }
 
 }
+
 export default new AuthController();
