@@ -9,7 +9,7 @@ class AuthController {
         let user = req.body;
         if (user.password != user.rePassword) {
             res.status(500).json({
-                message: 'Re-password fales'
+                message: 'Re-password false'
             })
         } else {
             user.password = await bcrypt.hash(user.password, 10);
