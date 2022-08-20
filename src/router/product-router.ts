@@ -4,7 +4,7 @@ import productController from "../controller/productController";
 
 export const productRouter = Router();
 // productRouter.use(auth)
-productRouter.get('',productController.getAll);
+productRouter.get('/product',productController.getAll);
 productRouter.post('',productController.addProduct);
 productRouter.get('/:id',productController.getProduct);
 productRouter.put('/:id',productController.updateProduct);

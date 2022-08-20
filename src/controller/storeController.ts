@@ -4,6 +4,7 @@ import { Request, Response} from "express";
 class StoreController {
     getAll = async (req: Request, res: Response) => {
         let stores = await Store.find();
+        console.log(stores);
         res.status(200).json(stores);
 
     }
