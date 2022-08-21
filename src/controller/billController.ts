@@ -10,8 +10,8 @@ class billController{
         try {
             let bill = req.body;
             bill = await bill.create(bill);
-            let newbill = await bill.findById(bill._id).populate('category', 'name');
-            res.status(201).json(newbill);
+            let newBill = await bill.findById(bill._id).populate('category', 'name');
+            res.status(201).json(newBill);
         }catch (error){
             next(error);
         }

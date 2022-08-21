@@ -2,6 +2,7 @@ import {model, Schema} from "mongoose";
 import {IProduct} from "./product"
 import {ICart} from './cart'
 export interface IItem {
+    price: number;
     amount : number,
     product : IProduct,
     cart : ICart,
@@ -9,6 +10,7 @@ export interface IItem {
 }
 
 const itemSchema = new Schema<IItem> ({
+    price: Number,
     amount : Number,
     product : {
         type : Schema.Types.ObjectId,

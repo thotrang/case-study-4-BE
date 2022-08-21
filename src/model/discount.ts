@@ -12,7 +12,7 @@ const discountSchema = new Schema<IDiscount> ({
     sale : Number,
     cart : {
         type : Schema.Types.ObjectId,
-        ref : 'Cart'
+        ref : 'Cart',
     }
 })
 

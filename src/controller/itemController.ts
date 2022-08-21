@@ -1,50 +1,24 @@
 import {NextFunction, Request, Response} from 'express'
 
 import {Item} from "../model/item";
+import {Cart} from "../model/cart";
 
 export class ItemController {
-    getALl = async (req: Request, res: Response, next: NextFunction) => {
-        let item = await Item.find().populate('product', ['name', 'price'])
-        res.status(200).json(item)
-    }
-    createItem = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            let add = req.body
-            add = await Item.create(add)
-            res.status(200).json(add)
-        } catch (err) {
-            next(err)
-        }
-    }
-    updateItem = async (req: Request, res: Response, next: NextFunction) => {
-        let id = req.params.id
-        try {
-            let item = await Item.findById(id)
-            if (!item) {
-                res.status(404).json()
-            } else {
-                let data = req.body
-                await Item.findOneAndUpdate({
-                    _id: id
-                }, data)
-                data._id = id
-                res.status(200).json(data)
+    getALlItemInCart = async (req: Request, res: Response, next: NextFunction) => {
+        let userId = req.query.user_id;
+        let cart = await Cart.findOne({
+            user: {
+                _id: userId,
+                status: 0
             }
-        } catch (err) {
-            next(err)
-        }
-    }
-    deleteItem = async (req: Request, res: Response, next: NextFunction) => {
-        let id = req.params.id
-        try {
-            let item = await Item.findById(id)
-            if (!item) {
-                res.status(404).json()
-            } else {
-                res.status(200).json()
+        })
+        let items = await Item.find({
+            cart: {
+                _id: cart._id
             }
-        } catch (err) {
-            next(err)
-        }
+        }).populate('product', ['name', 'price'])
+        res.status(200).json(items)
     }
+
 }
+export default new ItemController();
