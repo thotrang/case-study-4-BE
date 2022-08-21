@@ -61,5 +61,8 @@ class ProductController{
             res.status(200).json(product);
         }
     }
+    sortProduct = async (req: Request, res: Response) =>{
+
+    }
 }
 export default new ProductController();
