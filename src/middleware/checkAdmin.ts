@@ -1,10 +1,9 @@
 import {Request,Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 export const SECRET_KEY ="thotrang";
-export const auth = (req,res:Response,next:NextFunction) =>{
+export const checkAdmin = (req,res:Response,next:NextFunction) =>{
     
     let authorization = req.headers.authorization;
-    
     if(!authorization){
         res.status(401).json({
             message:"you is anonymous"
@@ -13,12 +12,18 @@ export const auth = (req,res:Response,next:NextFunction) =>{
         let accessToken = authorization.split(' ')[1];
         jwt.verify(accessToken,SECRET_KEY,(err,data)=>{
             if(err){
-                res.status(401).json({
-                    message:'you is anonymous '
-                })
+                res.status(401).json('you is anonymos')
             }else{  
-                req.decoded =data;
-                next();
+                req.decoded = data;
+                let roles = req.decoded.role
+                for(let role of roles ){
+                    if(role.name =='admin'){
+                        next();
+                    }else{
+                        res.status(401).json('you is anonymos')
+                    }
+                }
+                
             }
         })
     }

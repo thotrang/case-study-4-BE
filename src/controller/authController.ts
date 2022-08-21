@@ -4,31 +4,46 @@ import bcrypt from 'bcrypt';
 import { User } from "../model/user";
 import { SECRET_KEY } from "../middleware/auth";
 import { Role } from "../model/role";
+import { Cart } from "../model/cart";
+
 class AuthController {
     register = async (req: Request, res: Response) => {
         let user = req.body;
-        if (user.password != user.rePassword) {
-            res.status(500).json({
-                message: 'Re-password false'
-            })
-        } else {
+        let checkName = await User.findOne({
+            username: user.username
+        })
+        if (!checkName) {
             user.password = await bcrypt.hash(user.password, 10);
-            let role =await Role.findOne({
-                name:'user'
+            let role = await Role.findOne({
+                name: 'user'
             })
             user.role = [role._id];
-            console.log(user.role);
-            
             user.status = 1;
             user = await User.create(user);
-            await Role.updateMany({ '_id': user.role }, { $push: { users: user._id } });
+            let cart = await Cart.create({
+                user: user._id
+            })
+            
+            await Role.updateMany({ 'name': 'user' }, { $push: { users: user._id } });
+            await User.findOneAndUpdate({
+                _id: user._id,
+            },{
+                $set:{cart: cart._id}
+            });
+            user = await User.findById(user._id).populate('cart', 'user');
             res.status(201).json(user);
+
+        } else {
+            res.status(401).json({
+                message: 'Tên đăng nhập đã tồn tại'
+            })
         }
+
     }
 
-   
+
     login = async (req: Request, res: Response, next: NextFunction) => {
-        try{
+        try {
             let loginForm = req.body;
             let user = await User.findOne({
                 username: loginForm.username
@@ -58,10 +73,10 @@ class AuthController {
                     next()
                 }
             }
-        }catch(err){
+        } catch (err) {
             next(err)
         }
-        
+
     }
 
 }

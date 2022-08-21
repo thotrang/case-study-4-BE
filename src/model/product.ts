@@ -8,7 +8,7 @@ export interface IProduct{
     image?: string;
     description?: string;
     category?: ICategory;
-    store: IStore;
+    store?: IStore;
 
 }
 const productSchema = new Schema<IProduct>({
@@ -17,14 +17,14 @@ const productSchema = new Schema<IProduct>({
     amount: Number,
     image: String,
     description: String,
-    category: {
+    category: [{
         type: Schema.Types.ObjectId,
         ref: 'Category'
-    },
-    store:[{
+    }],
+    store:{
         type: Schema.Types.ObjectId,
         ref: 'Store'
-    }]
+    }
 
 })
 const Product = model<IProduct>('Product',productSchema);
