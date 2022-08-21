@@ -8,9 +8,9 @@ export interface IStore {
     name?: string;
     address?: string;
     image?: string;
-    user: IUser,
-    product:IProduct,
-    category:ICategory
+    user?: IUser,
+    product?:IProduct,
+    category?:ICategory
 
 }
 

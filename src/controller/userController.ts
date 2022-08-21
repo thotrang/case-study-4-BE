@@ -1,8 +1,8 @@
 import { Role } from "../model/role";
+import { Cart } from "../model/cart";
+
 import { User } from "../model/user";
 import { NextFunction, Request, Response } from "express";
-
-
 
 class UserController {
     getAll = async (req: Request, res: Response) => {
@@ -22,40 +22,15 @@ class UserController {
             next(err)
         }
     }
-    getUserWithRole = async (req: Request, res: Response) => {
-        let id = req.params.id;
-        let role = await Role.findById(id).populate('role', 'name');
-        if (!role) {
-            res.status(404).json();
-        } else {
-            let listUser = await role.users;
-            res.status(200).json(listUser);
-        }
-    }
+
     getseller = async (req: Request, res: Response, next: NextFunction) => {
-        let user = await User.find({
-            role: Role.findOne({
-                name: 'seller'
-            })
-        }).populate('role', 'name');
-        res.status(200).json(user);
+        let role = await Role.findOne({
+            name:'seller'
+        }).populate('users')
+        let users = role.users
+        res.status(200).json(users);
     }
-    // lockUser = async (req: Request, res: Response) => {
-    //     let id = req.params.id;
-    //     let user = await User.findById(id).populate('role', 'name');
-    //     if (!user) {
-    //         res.status(404).json();
-    //     } else {
-    //         if (user.status === 1) {
-    //             user.status = 0
-    //         } else {
-    //             user.status = 1
-    //         }
-    //         await Role.updateMany({ _id: user.role }, { $pull: { users: user._id } });
-    //         await Role.updateMany({ _id: user.role }, { $push: { users: user._id } });
-    //         res.status(200).json(user);
-    //     }
-    // }
+
     lockUser = async (req: Request, res: Response) => {
         let id = req.params.id;
         let user = await User.findById(id);
@@ -88,6 +63,8 @@ class UserController {
             } else {
                 await user.delete();
                 await Role.updateMany({ _id: user.role }, { $pull: { users: user._id } });
+                let cart = await Cart.findById(user.cart);
+                cart.delete();
                 console.log(user.role);
 
                 res.status(204).json();

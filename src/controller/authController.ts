@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import { User } from "../model/user";
 import { SECRET_KEY } from "../middleware/auth";
 import { Role } from "../model/role";
+import { Cart } from "../model/cart";
+
 class AuthController {
     register = async (req: Request, res: Response) => {
         let user = req.body;
@@ -15,14 +17,22 @@ class AuthController {
             let role = await Role.findOne({
                 name: 'user'
             })
-            
             user.role = [role._id];
             user.status = 1;
             user = await User.create(user);
-            await Role.updateMany({ 'name': 'user' }, { $push: { users: user._id } });
-
-            res.status(201).json(user);
+            let cart = await Cart.create({
+                user: user._id
+            })
             
+            await Role.updateMany({ 'name': 'user' }, { $push: { users: user._id } });
+            await User.findOneAndUpdate({
+                _id: user._id,
+            },{
+                $set:{cart: cart._id}
+            });
+            user = await User.findById(user._id).populate('cart', 'user');
+            res.status(201).json(user);
+
         } else {
             res.status(401).json({
                 message: 'Tên đăng nhập đã tồn tại'

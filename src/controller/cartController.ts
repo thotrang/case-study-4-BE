@@ -3,13 +3,11 @@ import {Cart} from "../model/cart";
 
 
 class CartController{
-    getAll = async (req: Request, res: Response)=>{
-        let carts = await Cart.find();
-        res.status(200).json(carts);
-    }
-    addToCart = async (req: Request, res: Response)=>{
-        let cart = req. body;
-        cart = await Cart.create(cart);
+
+    addToCart = async (req: Request, res: Response, userId)=>{
+        let cart = await Cart.create({
+            user:userId
+        });
         res.status(201).json(cart)
 
     }
