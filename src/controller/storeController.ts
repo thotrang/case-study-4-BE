@@ -1,9 +1,7 @@
 import { Store } from "../model/store";
-import {NextFunction, Request, Response} from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import {User} from "../model/user";
-import {Role} from "../model/role";
-import {Cart} from "../model/cart";
+import { User } from "../model/user";
 export const SECRET_KEY = "thotrang";
 class StoreController {
     getAll = async (req: Request, res: Response) => {
@@ -11,19 +9,26 @@ class StoreController {
         res.status(200).json(stores);
 
     }
-    addStore = async (req: Request, res: Response) => {
+    addStore = async (req: any, res: Response) => {
         let token;
         let authorization = req.headers.authorization;
         let accessToken = authorization.split(' ')[1];
         jwt.verify(accessToken, SECRET_KEY, (err, data) => {
-            token=data
+            token = data
+        })
+        let roles = token.role;
+        for (let role of roles) {
+            if (role.name == 'user') {
+                let store = req.body;
+                store.user = token._id;
+                console.log(store)
+                store = await Store.create(store);
+                return res.status(201).json(store);
+            }
+        } res.status(401).json({
+            message: 'Tài khoản không có quyền tạo store'
         })
 
-        let store = req.body;
-        store.user=token._id;
-        console.log(store)
-        store = await Store.create(store);
-        res.status(201).json(store);
 
     }
     deleteStore = async (req: Request, res: Response, next: NextFunction) => {
@@ -44,14 +49,14 @@ class StoreController {
     }
     getStore = async (req: Request, res: Response) => {
         let id = req.params.id;
-        try{
+        try {
             // Store.findById(id).populate('user').populate('product').exec((err, data)=>{
             //     console.log(data);
             //     res.status(200).json(data);
             // });
             let store = await Store.findById(id).populate('user').populate('store')
             res.status(200).json(store)
-        } catch(error){
+        } catch (error) {
             res.status(404).json(error.message)
         }
 
@@ -72,7 +77,7 @@ class StoreController {
             res.status(200).json(store);
         }
     }
-    searchStore = async (req: Request, res: Response)=>{
+    searchStore = async (req: Request, res: Response) => {
         let name = req.query.name;
         let store = await Store.find({ name: name });
 

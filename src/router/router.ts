@@ -5,6 +5,7 @@ import {cartRoute} from "./cart-route";
 import {storeRoute} from "./store-route";
 import {productRouter} from "./product-router";
 import {categoryRouter} from "./category-router"
+import { itemRouter } from "./item-router";
 
 export const router = Router();
 router.use('',routerAuth);
@@ -15,8 +16,7 @@ router.use('/admin/category', categoryRouter);
 
 router.use('/user',routerUser);
 
-
 router.use('/carts',cartRoute);
-router.use('/stores',storeRoute);
+router.use('/user/stores',storeRoute);
 router.use('/products', productRouter)
 router.use('/items', itemRouter)
