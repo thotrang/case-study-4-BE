@@ -1,5 +1,7 @@
 import { Role } from "../model/role";
 import { Cart } from "../model/cart";
+import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
 
 import { User } from "../model/user";
 import { NextFunction, Request, Response } from "express";
@@ -80,6 +82,7 @@ class UserController {
             res.status(404).json();
         } else {
             let data = req.body;
+            data.password = await bcrypt.hash(data.password, 10);
             await User.findOneAndUpdate({
                 _id: id
             }, data);
