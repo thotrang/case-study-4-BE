@@ -3,7 +3,7 @@ import { checkAdmin } from "../middleware/checkAdmin";
 import userController from "../controller/userController";
 import { auth } from "../middleware/auth";
 export const routerUser = Router();
-routerUser.use(auth);
+// routerUser.use(auth);
 routerUser.get('/users', checkAdmin, userController.getAll);
 routerUser.delete('/users/:id', checkAdmin, userController.deleteUser);
 routerUser.get('/users/:id', checkAdmin, userController.getUser)

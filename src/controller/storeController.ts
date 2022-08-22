@@ -1,6 +1,9 @@
 import { Store } from "../model/store";
-import { Request, Response } from "express";
+import {NextFunction, Request, Response} from "express";
 import jwt from "jsonwebtoken";
+import {User} from "../model/user";
+import {Role} from "../model/role";
+import {Cart} from "../model/cart";
 export const SECRET_KEY = "thotrang";
 class StoreController {
     getAll = async (req: Request, res: Response) => {
@@ -16,22 +19,27 @@ class StoreController {
             token=data
         })
 
-        let product = req.body;
-        product.user=token._id;
-        console.log(product)
-        product = await Store.create(product);
-        res.status(201).json(product);
+        let store = req.body;
+        store.user=token._id;
+        console.log(store)
+        store = await Store.create(store);
+        res.status(201).json(store);
 
     }
-    deleteStore = async (req: Request, res: Response) => {
+    deleteStore = async (req: Request, res: Response, next: NextFunction) => {
         let id = req.params.id;
-        let product = await Store.findById(id);
-        if (!product) {
-            res.status(404).json();
+        try {
+            let store = await Store.findById(id);
+            if (!store) {
+                res.status(404).json();
+            } else {
+                await store.delete();
+                await User.updateMany({ _id: store.user }, { $pull: { stores: store._id } });
 
-        } else {
-            product.delete();
-            res.status(204).json();
+                res.status(204).json();
+            }
+        } catch (error) {
+            next(error);
         }
     }
     getStore = async (req: Request, res: Response) => {
@@ -41,7 +49,7 @@ class StoreController {
             //     console.log(data);
             //     res.status(200).json(data);
             // });
-            let store = await Store.findById(id).populate('user').populate('product')
+            let store = await Store.findById(id).populate('user').populate('store')
             res.status(200).json(store)
         } catch (error) {
             res.status(404).json(error.message)
@@ -51,8 +59,8 @@ class StoreController {
     }
     updateStore = async (req: Request, res: Response) => {
         let id = req.params.id;
-        let product = await Store.findById(id);
-        if (!product) {
+        let store = await Store.findById(id);
+        if (!store) {
             res.status(404).json();
         } else {
             let data = req.body;
@@ -60,19 +68,19 @@ class StoreController {
                 _id: id
             }, data);
             data._id = id;
-            product = await Store.findById(id);
-            res.status(200).json(product);
+            store = await Store.findById(id);
+            res.status(200).json(store);
         }
     }
     searchStore = async (req: Request, res: Response) => {
         let name = req.query.name;
-        let product = await Store.find({ name: name });
+        let store = await Store.find({ name: name });
 
-        if (product[0]) {
-            res.status(200).json(product);
+        if (store[0]) {
+            res.status(200).json(store);
         } else {
             res.status(404).json({
-                message: "product not found"
+                message: "store not found"
             });
 
         }

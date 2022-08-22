@@ -16,7 +16,7 @@ class AuthController {
         if (!checkName) {
             user.password = await bcrypt.hash(user.password, 10);
             let role = await Role.findOne({
-                name: 'user'
+                name: 'admin'
             })
             user.role = [role._id];
             user.status = 1;
