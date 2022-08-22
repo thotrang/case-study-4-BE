@@ -17,3 +17,5 @@ router.use('/admin/category', categoryRouter);
 router.use('/user',routerUser);
 router.use('/carts',cartRoute);
 router.use('/user/store',storeRoute);
+router.use('/user/products',productRouter);
+router.use('/user/category',categoryRouter);
