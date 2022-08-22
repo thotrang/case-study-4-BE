@@ -1,11 +1,13 @@
 import { Role } from "../model/role";
 import { Cart } from "../model/cart";
+import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
 
 import { User } from "../model/user";
 import { NextFunction, Request, Response } from "express";
 
 class UserController {
-    getAll = async (req: Request, res: Response) => {
+    getAll = async (req: any, res: Response) => {
         let user = await User.find().populate('role', 'name');
         res.status(200).json(user);
     }
@@ -80,6 +82,7 @@ class UserController {
             res.status(404).json();
         } else {
             let data = req.body;
+            data.password = await bcrypt.hash(data.password, 10);
             await User.findOneAndUpdate({
                 _id: id
             }, data);
@@ -89,6 +92,11 @@ class UserController {
             user = await User.findById(id).populate('role', 'name');
             res.status(200).json(user);
         }
+    }
+    getUserToLocalStorage = async (req:any,res:Response) => {
+        let id = req.decoded._id;
+        let user = await User.findById(id)
+        res.json(user);
     }
 }
 export default new UserController();
