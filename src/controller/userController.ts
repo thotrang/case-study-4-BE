@@ -5,7 +5,7 @@ import { User } from "../model/user";
 import { NextFunction, Request, Response } from "express";
 
 class UserController {
-    getAll = async (req: Request, res: Response) => {
+    getAll = async (req: any, res: Response) => {
         let user = await User.find().populate('role', 'name');
         res.status(200).json(user);
     }
@@ -89,6 +89,11 @@ class UserController {
             user = await User.findById(id).populate('role', 'name');
             res.status(200).json(user);
         }
+    }
+    getUserToLocalStorage = async (req:any,res:Response) => {
+        let id = req.decoded._id;
+        let user = await User.findById(id)
+        res.json(user);
     }
 }
 export default new UserController();

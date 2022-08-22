@@ -9,6 +9,7 @@ import { Cart } from "../model/cart";
 class AuthController {
     register = async (req: Request, res: Response) => {
         let user = req.body;
+        user.avatar = 'https://upanh123.com/wp-content/uploads/2020/11/anh-tho-chibi.0.jpg'
         let checkName = await User.findOne({
             username: user.username
         })
@@ -23,12 +24,12 @@ class AuthController {
             let cart = await Cart.create({
                 user: user._id
             })
-            
+
             await Role.updateMany({ 'name': 'user' }, { $push: { users: user._id } });
             await User.findOneAndUpdate({
                 _id: user._id,
-            },{
-                $set:{cart: cart._id}
+            }, {
+                $set: { cart: cart._id }
             });
             user = await User.findById(user._id).populate('cart', 'user');
             res.status(201).json(user);
@@ -53,7 +54,7 @@ class AuthController {
                     message: 'Username is not existed!'
                 })
             } else {
-                if(user.status==1){
+                if (user.status == 1) {
                     let comparePassword = await bcrypt.compare(loginForm.password, user.password);
                     if (!comparePassword) {
                         res.status(401).json({
@@ -70,16 +71,17 @@ class AuthController {
                         });
                         res.status(200).json({
                             token: token,
-                            role: user.role
+                            role: user.role,
+                            id: user._id
                         });
                         next()
                     }
-                }else{
+                } else {
                     res.status(401).json({
                         message: 'Account is locked'
                     })
                 }
-                
+
             }
         } catch (err) {
             next(err)
