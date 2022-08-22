@@ -1,7 +1,7 @@
 import {Category} from "../model/category";
 import {Request, Response,NextFunction} from "express";
 
-class CategoryController{
+class CategoryController {
     getAll = async (req: Request, res: Response) => {
         let categories = await Category.find();
         res.status(200).json(categories);
@@ -11,7 +11,7 @@ class CategoryController{
             let category = req.body;
             category = await Category.create(category);
             res.status(201).json(category);
-        }catch (error){
+        } catch (error) {
             next(error);
         }
     }

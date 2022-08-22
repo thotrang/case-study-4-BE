@@ -35,7 +35,7 @@ class ProductController{
     getProduct = async (req: Request, res: Response, next: NextFunction) => {
         let id = req.params.id;
         try {
-            let product = await Product.findById(id).populate('category', 'name');
+            let product = await Product.find({category : id}).populate('category', 'name');
             if (!product) {
                 res.status(404).json();
             } else {
@@ -45,7 +45,6 @@ class ProductController{
             next(error)
         }
     }
-
     updateProduct = async (req: Request, res: Response) => {
         let id = req.params.id;
         let product = await Product.findById(id);
@@ -57,9 +56,17 @@ class ProductController{
                 _id: id
             }, data);
             data._id = id;
-            product = await Product.findById(id).populate('category','name');
+            product = await Product.findById(id)
             res.status(200).json(product);
         }
     }
+    // sortProduct = async (req : Request, res : Response, next : NextFunction) =>{
+    //     try {
+    //         let sort = await Product.find({}).sort({'price' : 1})
+    //         res.status(200).json(sort)
+    //     }catch(e) {
+    //         next(e)
+    //     }
+    // }
 }
 export default new ProductController();
