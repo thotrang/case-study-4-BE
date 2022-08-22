@@ -25,7 +25,7 @@ class AuthController {
                 user: user._id
             })
 
-            await Role.updateMany({ 'name': 'user' }, { $push: { users: user._id } });
+            await Role.updateMany({ _id: user.role }, { $push: { users: user._id } });
             await User.findOneAndUpdate({
                 _id: user._id,
             }, {
@@ -88,6 +88,7 @@ class AuthController {
         }
 
     }
+    
 
 }
 export default new AuthController();
