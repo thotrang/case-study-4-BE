@@ -13,7 +13,8 @@ router.use('/admin/products', productRouter);
 router.use('/admin/stores', storeRoute);
 router.use('/admin/category', categoryRouter);
 
-
 router.use('/user',routerUser);
+
+
 router.use('/carts',cartRoute);
 router.use('/user/store',storeRoute);

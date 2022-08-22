@@ -1,7 +1,6 @@
-import { Store } from "../model/store";
-import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
-export const SECRET_KEY = "thotrang";
+import {Store} from "../model/store";
+import { Request, Response} from "express";
+
 class StoreController {
     getAll = async (req: Request, res: Response) => {
         let stores = await Store.find().populate('product');
@@ -9,18 +8,7 @@ class StoreController {
 
     }
     addStore = async (req: Request, res: Response) => {
-        let token;
-        let authorization = req.headers.authorization;
-        let accessToken = authorization.split(' ')[1];
-        jwt.verify(accessToken, SECRET_KEY, (err, data) => {
-            token=data
-        })
-
-        let product = req.body;
-        product.user=token._id;
-        console.log(product)
-        product = await Store.create(product);
-        res.status(201).json(product);
+        // let id =    
 
     }
     deleteStore = async (req: Request, res: Response) => {
@@ -36,14 +24,14 @@ class StoreController {
     }
     getStore = async (req: Request, res: Response) => {
         let id = req.params.id;
-        try {
+        try{
             // Store.findById(id).populate('user').populate('product').exec((err, data)=>{
             //     console.log(data);
             //     res.status(200).json(data);
             // });
             let store = await Store.findById(id).populate('user').populate('product')
             res.status(200).json(store)
-        } catch (error) {
+        } catch(error){
             res.status(404).json(error.message)
         }
 
@@ -64,15 +52,15 @@ class StoreController {
             res.status(200).json(product);
         }
     }
-    searchStore = async (req: Request, res: Response) => {
+    searchStore = async (req: Request, res: Response)=>{
         let name = req.query.name;
-        let product = await Store.find({ name: name });
+        let product= await Store.find({name: name});
 
         if (product[0]) {
             res.status(200).json(product);
         } else {
             res.status(404).json({
-                message: "product not found"
+                message:"product not found"
             });
 
         }
