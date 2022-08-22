@@ -53,25 +53,33 @@ class AuthController {
                     message: 'Username is not existed!'
                 })
             } else {
-                let comparePassword = await bcrypt.compare(loginForm.password, user.password);
-                if (!comparePassword) {
-                    res.status(401).json({
-                        message: 'Password is wrong'
-                    })
-                } else {
-                    let payload = {
-                        username: user.username,
-                        role: user.role
+                if(user.status==1){
+                    let comparePassword = await bcrypt.compare(loginForm.password, user.password);
+                    if (!comparePassword) {
+                        res.status(401).json({
+                            message: 'Password is wrong'
+                        })
+                    } else {
+                        let payload = {
+                            username: user.username,
+                            role: user.role,
+                            _id: user._id
+                        }
+                        let token = await jwt.sign(payload, SECRET_KEY, {
+                            expiresIn: 36000
+                        });
+                        res.status(200).json({
+                            token: token,
+                            role: user.role
+                        });
+                        next()
                     }
-                    let token = await jwt.sign(payload, SECRET_KEY, {
-                        expiresIn: 36000
-                    });
-                    res.status(200).json({
-                        token: token,
-                        role: user.role
-                    });
-                    next()
+                }else{
+                    res.status(401).json({
+                        message: 'Account is locked'
+                    })
                 }
+                
             }
         } catch (err) {
             next(err)

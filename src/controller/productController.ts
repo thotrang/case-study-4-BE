@@ -11,9 +11,8 @@ class ProductController {
     addProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             let product = req.body;
-
             product = await Product.create(product);
-            let newProduct = await Product.findById(product._id).populate('category', 'name');
+            let newProduct = await Product.findById(product._id);
          
             await Category.updateMany({ _id: product.category }, { $push: { product: product._id } });
             await Store.updateMany({ _id: product.store }, { $push: { product: product._id } });
@@ -41,9 +40,8 @@ class ProductController {
     getProduct = async (req: Request, res: Response, next: NextFunction) => {
         let id = req.params.id;
         try {
-            let product = await Product.findById(id);
-            await product.populate('category')
-            await product.populate('store')
+            let product = await Product.findById(id).populate('category').populate('store')
+
             if (!product) {
                 res.status(404).json();
             } else {                
