@@ -7,7 +7,7 @@ import {productRouter} from "./product-router";
 import {categoryRouter} from "./category-router"
 import { itemRouter } from "./item-router";
 
-export const router = Router();
+    export const router = Router();
 router.use('',routerAuth);
 router.use('/admin', routerUser);
 router.use('/admin/products', productRouter);

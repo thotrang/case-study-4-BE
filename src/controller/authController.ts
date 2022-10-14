@@ -26,6 +26,7 @@ class AuthController {
             })
 
             await Role.updateMany({ _id: user.role }, { $push: { users: user._id } });
+ 
             await User.findOneAndUpdate({
                 _id: user._id,
             }, {
